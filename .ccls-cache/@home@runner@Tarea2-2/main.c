@@ -132,9 +132,17 @@ void buscar_genero(Map *pelis_byid){
   MapPair *pair = map_first(pelis_byid);
   while(pair != NULL){
     Film *peli = pair->value;
-    if(strcmp(peli->value->genres, genero))
-  }
-  
+    List *generosPeli = peli->genres;
+    char *current_genre = list_first(generosPeli);
+    while(current_genre != NULL){
+      if(strcmp(current_genre, genero) != 0){
+        printf("Título: %s\n", peli->title);
+      }
+      current_genre = list_next(generosPeli);
+    }
+    pair = map_next(pelis_byid);
+  } 
+   
 }
 
 int main() {
