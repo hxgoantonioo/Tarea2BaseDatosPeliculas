@@ -51,6 +51,29 @@ int is_equal_str(void *key1, void *key2) {
  * @param key2 Segundo puntero a la clave entera.
  * @return Retorna 1 si las claves son iguales, 0 de lo contrario.
  */
+
+/*Funcion que toma un string, los divide en substrings basados en el delimitador  y los guarda en una lista */
+List* strings_list(const char *str, const char *delim){
+  List *lista = list_create(); //lista que almacena las subscadenas
+  char *token = strtok((char *)str, delim);
+
+  while(token != NULL){
+    while(*token == ' '){
+      token++;
+    }
+    //Eliminar espacios en blanco
+    char *end = token + strlen(token) - 1;
+    while(*end == ' ' && end > token){
+      *end = '\0';
+      end--;
+    }
+    char *new_token = strdup(token); //copia el token a un nuevo string
+    list_pushBack(lista, new_token); //agrega el nuevo string a la lista
+    token = strtok(NULL, delim);
+  }
+  return lista;
+}
+
 int is_equal_int(void *key1, void *key2) {
   return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
