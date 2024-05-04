@@ -149,10 +149,13 @@ void buscar_por_id(Map *pelis_byid) {
 }
 
 void buscar_genero(Map *pelis_byid){
-
-  
 }
 
+/* 
+* Esta funcion buscar por nombre o apellido a los directores de las peliculas registradas en el mapa
+* @param pelis_byid: mapa que contiene los datos de las peliculas registrados
+* @param dir: nombre o apellido a buscar
+*/
 void buscar_director(Map *pelis_byid){
   char dir[100];
   printf("Ingrese el nombre del director: ");
@@ -161,15 +164,17 @@ void buscar_director(Map *pelis_byid){
   printf("\nResultado de busqueda:\n");
   while(pair != NULL){
     Film *peli = pair->value;
-    char *directores = peli->director;
-    char *token = strtok(peli->director, ", ");
-    
+    /*sin un strdip se modificaria el char original, imprimiendo en "cargar peliculas" el primer token.*/
+    char *directores = strdup(peli->director); // Copiar la cadena original para no  modificarla con el token
+    //Tokeniza la cadena de nombres y apellidos.
+    char *token = strtok(directores, ", ");
     while(token != NULL){
       if(strcmp(token, dir) == 0){
-        printf("Título: %s, Año: %d, Director: %s\n\n", peli->title, peli->year, directores);
+        printf("Título: %s, Año: %d, Director: %s\n\n", peli->title, peli->year, peli->director);
       }
       token = strtok(NULL, ", "); 
     }
+    free(directores); //liberar la memoria de la copia
     pair = map_next(pelis_byid);
       
   }
