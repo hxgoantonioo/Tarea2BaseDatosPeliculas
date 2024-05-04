@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 typedef struct {
   char id[100];
@@ -52,10 +51,6 @@ int is_equal_str(void *key1, void *key2) {
  * @param key2 Segundo puntero a la clave entera.
  * @return Retorna 1 si las claves son iguales, 0 de lo contrario.
  */
-int is_equal_int(void *key1, void *key2) {
-  return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
-}
-
 
 /*Funcion que toma un string, los divide en substrings basados en el delimitador  y los guarda en una lista */
 List* strings_list(const char *str, const char *delim){
@@ -79,6 +74,9 @@ List* strings_list(const char *str, const char *delim){
   return lista;
 }
 
+int is_equal_int(void *key1, void *key2) {
+  return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
+}
 
 /**
  * Carga películas desde un archivo CSV y las almacena en un mapa por ID.
@@ -104,20 +102,21 @@ void cargar_peliculas(Map *pelis_byid) {
     strcpy(peli->id, campos[1]);        // Asigna ID
     strcpy(peli->title, campos[5]);     // Asigna título
     strcpy(peli->director, campos[14]); // Asigna director
-    peli->genres = list_create();       // Inicializa la lista de géneros
-    peli->year = atoi(campos[10]); // Asigna año, convirtiendo de cadena a entero
+    peli->genres = list_create();  // Inicializa la lista de géneros
+    peli->year =
+        atoi(campos[10]); // Asigna año, convirtiendo de cadena a entero
 
     // Inserta la película en el mapa usando el ID como clave
     map_insert(pelis_byid, peli->id, peli);
   }
   fclose(archivo); // Cierra el archivo después de leer todas las líneas
 
-
   // Itera sobre el mapa para mostrar las películas cargadas
   MapPair *pair = map_first(pelis_byid);
   while (pair != NULL) {
     Film *peli = pair->value;
-    printf("ID: %s, Título: %s, Director: %s, Año: %d\n", peli->id, peli->title, peli->director, peli->year);
+    printf("ID: %s, Título: %s, Director: %s, Año: %d\n", peli->id, peli->title,
+           peli->director, peli->year);
     pair = map_next(pelis_byid); // Avanza al siguiente par en el mapa
   }
 }
@@ -148,30 +147,21 @@ void buscar_por_id(Map *pelis_byid) {
   }
 }
 
-void buscar_genero(Map *pelis_byid){
-
-  
-}
-
-void buscar_director(Map *pelis_byid){
-  char dir[100];
-  printf("Ingrese el nombre del director: ");
-  scanf("%s", dir);
+void imprimirGeneros(Map *pelis_byid) {
+  // Itera sobre todas las películas en el mapa
   MapPair *pair = map_first(pelis_byid);
-  printf("\nResultado de busqueda:\n");
-  while(pair != NULL){
+  while (pair != NULL) {
     Film *peli = pair->value;
-    char *directores = peli->director;
-    char *token = strtok(peli->director, ", ");
+    List *genres = peli->genres;
+
+    // Imprime los géneros de la película actual
+    printf("ID: %s, Géneros: ", peli->id);
     
-    while(token != NULL){
-      if(strcmp(token, dir) == 0){
-        printf("Título: %s, Año: %d, Director: %s\n\n", peli->title, peli->year, directores);
-      }
-      token = strtok(NULL, ", "); 
-    }
-    pair = map_next(pelis_byid);
-      
+    printf("%s ", (char *)peli->genres);
+    
+    printf("\n");
+
+    pair = map_next(pelis_byid); // Avanza al siguiente par en el mapa
   }
 }
 
@@ -198,18 +188,15 @@ int main() {
       buscar_por_id(pelis_byid);
       break;
     case '3':
-      buscar_genero(pelis_byid);
+      imprimirGeneros(pelis_byid);
       break;
     case '4':
-      buscar_director(pelis_byid);
       break;
     case '5':
-
       break;
     case '6':
       break;
     case '7':
-      
       break;
     }
     presioneTeclaParaContinuar();

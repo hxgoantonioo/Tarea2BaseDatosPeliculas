@@ -34,6 +34,8 @@ void *list_first(List *L) {
   return L->current->data;
 }
 
+
+
 void *list_next(List *L) {
   if (L == NULL || L->current == NULL || L->current->next == NULL) {
     return NULL; // Lista vacía, no inicializada o no hay más elementos
