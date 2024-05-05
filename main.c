@@ -56,11 +56,47 @@ int is_equal_int(void *key1, void *key2) {
   return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
 
+void generar_mapa(Map *pelis_byid, Map *genres_map) {
+    MapPair* pair = map_first(pelis_byid); // Agarramos el primer par del mapa con todas las películas
 
+    while (pair != NULL) {
+        Film *peli = pair->value;
+        char *node = list_first(peli->genres);
+
+        while (node != NULL) {
+            MapPair *par = map_search(genres_map, node); // Busco en el mapa de géneros si hay algún dato con clave del género actual
+            if (par == NULL) {
+                // Si no hay una lista para este género, creamos una nueva lista y la asociamos con este género en el mapa
+                List* lista = list_create(); // Creamos la lista a guardar en el mapa
+                map_insert(genres_map, strdup(node), lista); // Insertamos la lista en el mapa
+                list_pushBack(lista, peli); // Insertamos la película a la lista
+            } else { 
+                // Si ya existe una lista para este género, simplemente agregamos la película a esa lista
+                List* lista = (List*) par->value; // Obtenemos el dato del par, el cual será la lista con las películas del género
+                list_pushBack(lista, peli); // Insertamos la película a la lista de películas del género actual
+            }
+            node = list_next(peli->genres); 
+        }
+        pair = map_next(pelis_byid); // Avanzamos al siguiente par en el mapa de películas
+    }
+}
+
+void borrarComillas(char *str) { 
+  int len = strlen(str);
+  if (str[0] == '"') {
+  memmove(str, str + 1, len); //Movemos el inicio de la cadena a un espacio a la derecha
+    len--; //Bajamos en 1 el tamaño de la cadena
+  }
+  if (len > 0 && str[len - 1] == '"') { //Si el último carácter es una comilla
+    str[len - 1] = '\0'; //Lo cambiamos al carácter nulo para que ahí termine la cadena.
+  }
+}
 /*Funcion que toma un string, los divide en substrings basados en el delimitador  y los guarda en una lista */
 List* strings_list(const char *str, const char *delim){
   List *lista = list_create(); //lista que almacena las subscadenas
+  char *str_copy = strdup(str);
   char *token = strtok((char *)str, delim);
+
 
   while(token != NULL){
     while(*token == ' '){
@@ -76,9 +112,9 @@ List* strings_list(const char *str, const char *delim){
     list_pushBack(lista, new_token); //agrega el nuevo string a la lista
     token = strtok(NULL, delim);
   }
+  free(str_copy);
   return lista;
 }
-
 
 /**
  * Carga películas desde un archivo CSV y las almacena en un mapa por ID.
@@ -104,7 +140,9 @@ void cargar_peliculas(Map *pelis_byid) {
     strcpy(peli->id, campos[1]);        // Asigna ID
     strcpy(peli->title, campos[5]);     // Asigna título
     strcpy(peli->director, campos[14]); // Asigna director
-    peli->genres = list_create();       // Inicializa la lista de géneros
+    peli->genres = list_create();
+    borrarComillas(campos[11]);
+    peli->genres = strings_list(campos[11], ", ");       // Inicializa la lista de géneros
     peli->year = atoi(campos[10]);      // Asigna año, convirtiendo de cadena a entero
     peli->rating = atof(campos[8]);     // Asigna rating, convirtiendo de cadena a real
 
@@ -154,6 +192,17 @@ void buscar_por_id(Map *pelis_byid) {
 }
 
 void buscar_genero(Map *pelis_byid){
+  Map *genres_map = map_create(is_equal_str);
+  generar_mapa(pelis_byid, genres_map);
+  char genero[100];
+  printf("Ingrese el género de la película: ");
+  scanf("%s", genero);
+  MapPair *pair = map_search(genres_map, genero);
+  while(pair != NULL){
+    Film *pelis = pair->value;
+    printf("Título: %s, Director: %s, Año: %d\n", pelis->title, pelis->director, pelis->year);
+    pair = map_next(genres_map); // Usar map_next con el par actual
+  }
 }
 
 /* 
@@ -207,7 +256,7 @@ void buscar_por_decada(Map *pelis_byid)
   MapPair *pair = map_first(pelis_byid);
   //Se inicia un contador con las peliculas que pertenecen a la decada ingresada
   int contadorPeliculas = 0;
-  //Se inicia un iterador para recorrer el mapa
+  //Se inicia un pairador para recorrer el mapa
   while (pair != NULL)
     {
       //Se crea un puntero de tipo Film que almacenara el valor del par actual
@@ -299,7 +348,7 @@ void buscar_por_rango_calificaciones(Map *pelis_byid)
     }
   // Se crea un puntero de tipo MapPair que almacenara el primer par del mapa
   MapPair *pair = map_first(pelis_byid);
-  // Se inicia un iterador para recorrer el mapa
+  // Se inicia un pairador para recorrer el mapa
   while (pair != NULL)
     {
       // Se crea un puntero de tipo Film que almacenara el valor del par actual
@@ -330,7 +379,7 @@ int main() {
   // comparación que trabaja con claves de tipo string.
   Map *pelis_byid = map_create(is_equal_str);
 
-  // Recuerda usar un mapa por criterio de búsqueda
+  // Recuerda usar un mapa por crpairio de búsqueda
 
   do {
     mostrarMenuPrincipal();
