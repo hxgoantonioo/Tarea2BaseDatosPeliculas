@@ -56,30 +56,7 @@ int is_equal_int(void *key1, void *key2) {
   return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
 
-void generar_mapa(Map *pelis_byid, Map *genres_map) {
-    MapPair* pair = map_first(pelis_byid); // Agarramos el primer par del mapa con todas las películas
 
-    while (pair != NULL) {
-        Film *peli = pair->value;
-        char *node = list_first(peli->genres);
-
-        while (node != NULL) {
-            MapPair *par = map_search(genres_map, node); // Busco en el mapa de géneros si hay algún dato con clave del género actual
-            if (par == NULL) {
-                // Si no hay una lista para este género, creamos una nueva lista y la asociamos con este género en el mapa
-                List* lista = list_create(); // Creamos la lista a guardar en el mapa
-                map_insert(genres_map, strdup(node), lista); // Insertamos la lista en el mapa
-                list_pushBack(lista, peli); // Insertamos la película a la lista
-            } else { 
-                // Si ya existe una lista para este género, simplemente agregamos la película a esa lista
-                List* lista = (List*) par->value; // Obtenemos el dato del par, el cual será la lista con las películas del género
-                list_pushBack(lista, peli); // Insertamos la película a la lista de películas del género actual
-            }
-            node = list_next(peli->genres); 
-        }
-        pair = map_next(pelis_byid); // Avanzamos al siguiente par en el mapa de películas
-    }
-}
 
 void borrarComillas(char *str) { 
   int len = strlen(str);
@@ -161,6 +138,35 @@ void cargar_peliculas(Map *pelis_byid) {
   }
 }
 
+void generar_mapa(Map *pelis_byid, Map *genres_map) {
+  MapPair* pair = map_first(pelis_byid); // Agarramos el primer par del mapa con todas las películas
+
+  while (pair != NULL) {
+    Film *peli = pair->value;
+    char *node = list_first(peli->genres);
+
+    while (node != NULL) {
+      //Busco en el mapa de géneros si hay algún dato con clave del género actual
+      MapPair *par = map_search(genres_map, node); 
+      if (par == NULL) {
+      // Si no hay una lista para este género, creamos una nueva lista y la asociamos con este género en el mapa
+        List* lista = list_create(); // Creamos la lista a guardar en el mapa
+        map_insert(genres_map, strdup(node), lista); // Insertamos la lista en el mapa
+        list_pushBack(lista, peli); // Insertamos la película a la lista
+      } 
+      else { // Si ya existe una lista para este género, simplemente agregamos la película a esa lista
+        List* lista = (List*) par->value;
+        if(lista == NULL){
+          lista = list_create();
+          par->value = lista;
+        }
+        list_pushBack(lista, peli);
+      }
+      node = list_next(peli->genres);
+    }
+    pair = map_next(pelis_byid); // Avanzamos al siguiente par en el mapa de películas
+  }
+}
 /**
  * Busca y muestra la información de una película por su ID en un mapa.
  */
@@ -192,17 +198,7 @@ void buscar_por_id(Map *pelis_byid) {
 }
 
 void buscar_genero(Map *pelis_byid){
-  Map *genres_map = map_create(is_equal_str);
-  generar_mapa(pelis_byid, genres_map);
-  char genero[100];
-  printf("Ingrese el género de la película: ");
-  scanf("%s", genero);
-  MapPair *pair = map_search(genres_map, genero);
-  while(pair != NULL){
-    Film *pelis = pair->value;
-    printf("Título: %s, Director: %s, Año: %d\n", pelis->title, pelis->director, pelis->year);
-    pair = map_next(genres_map); // Usar map_next con el par actual
-  }
+  
 }
 
 /* 
