@@ -37,3 +37,20 @@ Funcionalidades
 ---
 Ejemplos de uso
 ---
+
+
+---
+Contribuciones
+---
+**Daniela Vallejos:**
+- Implemento funcion director
+- Implementacion de codigo faltante para la lectura de los generos.
+- Implementoacion de funciones para borrar comillas y pasar un string de generos a una lista.
+- Diseño y redaccion del README.
+
+**Hugo Gonzales:**
+- Implemento de funcion busqueda de generos(correciones).
+- Implementacion de funcion de busqueda por rango de calificaciones e instruccion de mapa vacio en cada funcion.
+- Implementacion de funciones de busqueda  por decada, decada y genero.
+- Documentacion y comentarios dentro del codigo.
+- Correcion de errores para reconocer minusculas en las funciones de busqueda.
