@@ -5,19 +5,19 @@ Buscador de Peliculas por distintos criterios.
 **Descripcion**
 ---
 
-Este es un programa que implimenta una base de datos de peliculas utilizando estructuras de datos, en este caso se hizo uso de listas y mapas. Dentro de sus funciones principales se encuentra la opcion de cargar estos datos desde un archivo .csc, buscar las peliculas registradas por diferentes criterios como ID, genero, director y rango de calificaciones.
+Este es un programa que implementa una base de datos de peliculas utilizando estructuras de datos, en este caso se hizo uso de listas y mapas. Dentro de sus funciones principales se encuentra la opcion de cargar estos datos desde un archivo .csv, buscar las peliculas registradas por diferentes criterios como ID, genero, director y rango de calificaciones.
 
 
-Compilacion y ejecion del codigo
+Compilacion y ejecucion del codigo
 --
 - Para lo siguiente es necesario tener un compilador de C compatible con las bibliotecas estandar de C.
-1. Clona o descargar este repotorio.
+1. Clona o descargar este repositorio.
 2. Asegurarse de que el archivo .csv se encuentre en el formado adecuado y sus datos sean validos.
 3. Compilar el programa en el compilador de C instalado.
 4. Ejecutar el programa compilado.
 5. Leer atentantamente el menu y seguir las instrucciones de cada opcion para interactuar con la base de datos de peliculas.
 
-**importate elegir la opcion 1) Cargar peliculas, antes de interactuar con cualquier otra opcion.**
+**Importante elegir la opcion 1) Cargar peliculas, antes de interactuar con cualquier otra opcion.**
 
 ---
 Funcionalidades
@@ -28,7 +28,7 @@ Funcionalidades
 - Busqueda por director.
 - Busqueda por decada.
 - Busqueda por rango de calificaciones.
-- Busqueda de decada y genero.
+- Busqueda por decada y genero.
  
 **Problemas conocidos**
 -
@@ -39,7 +39,7 @@ Ejemplos de uso
 ---
 **Primer paso y mas importante**
 
-escribir 1, al ingresar una opcion para evitar errores.
+Escribir 1, al ingresar una opcion para evitar errores.
 Esto leera el archivo .csv antes mencionado.
 ![image](image.png)
 
@@ -62,7 +62,7 @@ Contribuciones
 **Daniela Vallejos:**
 - Implemento funcion director
 - Implementacion de codigo faltante para la lectura de los generos.
-- Implementoacion de funciones para borrar comillas y pasar un string de generos a una lista.
+- Implementacion de funciones para borrar comillas y pasar un string de generos a una lista.
 - Diseño y redaccion del README.
 
 **Hugo Gonzalez:**
