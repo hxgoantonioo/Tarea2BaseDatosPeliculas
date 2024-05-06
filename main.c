@@ -228,8 +228,7 @@ void buscar_genero(Map *pelis_byid)
 * @param dir: nombre o apellido a buscar
 */
 void buscar_director(Map *pelis_byid){
-  if (map_first(pelis_byid) == NULL)
-  {
+  if (map_first(pelis_byid) == NULL){
     printf("No hay peliculas registradas.\n");
     return;
   }
@@ -263,8 +262,7 @@ void buscar_director(Map *pelis_byid){
 }
 
 //Esta funcion recibe un mapa de peliculas y imprime todas las peliculas que hayan salido en una decada dada por el usuario
-void buscar_por_decada(Map *pelis_byid)
-{
+void buscar_por_decada(Map *pelis_byid){
   if (map_first(pelis_byid) == NULL)
   {
     printf("No hay peliculas registradas.\n");
@@ -301,8 +299,7 @@ void buscar_por_decada(Map *pelis_byid)
 }
 
 // Esta funcion recibe un mapa de peliculas y imprime todas las peliculas que hay en un rango predeterminado de calificaciones
-void buscar_por_rango_calificaciones(Map *pelis_byid)
-{
+void buscar_por_rango_calificaciones(Map *pelis_byid){
   if (map_first(pelis_byid) == NULL)
   {
     printf("No hay peliculas registradas.\n");
@@ -387,8 +384,7 @@ void buscar_por_rango_calificaciones(Map *pelis_byid)
 }
 
 // Esta funcion recibe un mapa, con el cual a traves de dos variables, una de tipo string y otra de tipo int, busca las peliculas con un genero y una decada que requiera el usuario
-void buscar_por_decada_genero(Map *pelis_byid)
-{
+void buscar_por_decada_genero(Map *pelis_byid){
   // Si el mapa esta vacio, se imprime un mensaje correspondiente y se retorna
   if (map_first(pelis_byid) == NULL)
   {

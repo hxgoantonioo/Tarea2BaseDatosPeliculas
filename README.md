@@ -10,7 +10,7 @@ Este es un programa que implimenta una base de datos de peliculas utilizando est
 
 Compilacion y ejecion del codigo
 --
-- Para lo siguien es necesario tener un compilador de C compatible con las bibliotecas estandar de C.
+- Para lo siguiente es necesario tener un compilador de C compatible con las bibliotecas estandar de C.
 1. Clona o descargar este repotorio.
 2. Asegurarse de que el archivo .csv se encuentre en el formado adecuado y sus datos sean validos.
 3. Compilar el programa en el compilador de C instalado.
@@ -37,6 +37,23 @@ Funcionalidades
 ---
 Ejemplos de uso
 ---
+**Primer paso y mas importante**
+
+escribir 1, al ingresar una opcion para evitar errores.
+Esto leera el archivo .csv antes mencionado.
+![image](image.png)
+
+El sistema entregara una lista de todas las peliculas registradas como se muesta a continuacion.
+![image](image_2.png)
+
+**Luego de esto se pueden usar las siguientes opciones del menu con libertad 
+ejemplos de algunas funciones :**
+
+- Opcion 4) Buscar por director.
+ ![image](image_3.png)
+
+- Opcion 6) Buscar por rango de calificaciones.
+ ![image](image_4.png)
 
 
 ---

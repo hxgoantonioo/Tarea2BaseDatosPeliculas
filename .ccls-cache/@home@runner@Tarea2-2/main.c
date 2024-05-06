@@ -56,7 +56,15 @@ int is_equal_int(void *key1, void *key2) {
   return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
 
-
+// Funcion que convierte la primera letra de un string a mayuscula y las demas en minusculas 
+void capitalizeWord(char *palabra) {
+  if (palabra[0]) {
+    palabra[0] = toupper(palabra[0]);
+    for (int i = 1; palabra[i]; i++) {
+      palabra[i] = tolower(palabra[i]);
+    }
+  }
+}
 
 void borrarComillas(char *str) { 
   int len = strlen(str);
@@ -138,35 +146,6 @@ void cargar_peliculas(Map *pelis_byid) {
   }
 }
 
-void generar_mapa(Map *pelis_byid, Map *genres_map) {
-  MapPair* pair = map_first(pelis_byid); // Agarramos el primer par del mapa con todas las películas
-
-  while (pair != NULL) {
-    Film *peli = pair->value;
-    char *node = list_first(peli->genres);
-
-    while (node != NULL) {
-      //Busco en el mapa de géneros si hay algún dato con clave del género actual
-      MapPair *par = map_search(genres_map, node); 
-      if (par == NULL) {
-      // Si no hay una lista para este género, creamos una nueva lista y la asociamos con este género en el mapa
-        List* lista = list_create(); // Creamos la lista a guardar en el mapa
-        map_insert(genres_map, strdup(node), lista); // Insertamos la lista en el mapa
-        list_pushBack(lista, peli); // Insertamos la película a la lista
-      } 
-      else { // Si ya existe una lista para este género, simplemente agregamos la película a esa lista
-        List* lista = (List*) par->value;
-        if(lista == NULL){
-          lista = list_create();
-          par->value = lista;
-        }
-        list_pushBack(lista, peli);
-      }
-      node = list_next(peli->genres);
-    }
-    pair = map_next(pelis_byid); // Avanzamos al siguiente par en el mapa de películas
-  }
-}
 /**
  * Busca y muestra la información de una película por su ID en un mapa.
  */
@@ -197,8 +176,50 @@ void buscar_por_id(Map *pelis_byid) {
   }
 }
 
-void buscar_genero(Map *pelis_byid){
-  
+// Esta funcion recibe un mapa, con el cual a traves de un string, busca las peliculas con el genero que contiene ese string
+void buscar_genero(Map *pelis_byid)
+{
+  // Si el mapa esta vacio, se imprime un mensaje correspondiente y se retorna
+  if (map_first(pelis_byid) == NULL)
+  {
+    printf("No hay peliculas registradas.\n");
+    return;
+  }
+  // Se crea la variable genero de tipo char, que almacenara el genero ingresado por el usuario y respectivamente se lee el genero ingresado y convierte el string en su primera letra en mayuscula y las demas en minusculas
+  char genero[100];
+  printf("Ingrese el genero de la pelicula: ");
+  scanf("%s", genero);
+  capitalizeWord(genero);
+  // Se crea un puntero de tipo MapPair que almacenara el primer par del mapa, y se inicia un contador de tipo int que ira aumentando en 1 cada vez que se encuentre una pelicula con el genero ingresado
+  MapPair *pair = map_first(pelis_byid);
+  int contador = 0;
+  // Se recorre el mapa hasta que el puntero pair llegue a NULL, es decir, hasta que se haya recorrido todo el mapa
+  while (pair != NULL)
+    {
+      // Se crean tres punteros, uno de tipo Film que almacenara los datos de la pelicula actual, otro de tipo List que almacenara los generos de la pelicula actual y otro de tipo char que almacenara el genero actual
+      Film *peli = pair->value;
+      List *genres = peli->genres;
+      char *node = list_first(genres);
+      // Se recorre la lista de generos de la pelicula actual hasta que se haya recorrido todos los generos
+      while (node != NULL)
+        {
+          // Si el genero actual coincide con el genero ingresado por el usuario, se incrementa el contador
+          if (strcmp(node, genero) == 0)
+          {
+            printf("Título: %s, Director: %s, Año: %d\n", peli->title, peli->director, peli->year);
+            contador++;
+          }
+          // Se avanza al siguiente nodo de la lista de generos
+          node = list_next(genres);
+        }
+      // Se avanza al siguiente par del mapa
+      pair = map_next(pelis_byid);
+    }
+  // Si el contador es 0, significa que no se encontraron peliculas con el genero ingresador por el usuario
+  if (contador == 0)
+  {
+    printf("No hay peliculas con el genero %s\n", genero);
+  }
 }
 
 /* 
@@ -207,15 +228,16 @@ void buscar_genero(Map *pelis_byid){
 * @param dir: nombre o apellido a buscar
 */
 void buscar_director(Map *pelis_byid){
-  if (map_first(pelis_byid) == NULL)
-  {
+  if (map_first(pelis_byid) == NULL){
     printf("No hay peliculas registradas.\n");
     return;
   }
   char dir[100];
   printf("Ingrese el nombre del director: ");
   scanf("%s", dir);
+  capitalizeWord(dir);
   MapPair *pair = map_first(pelis_byid);
+  int contador = 0;
   printf("\nResultado de busqueda:\n");
   while(pair != NULL){
     Film *peli = pair->value;
@@ -225,19 +247,22 @@ void buscar_director(Map *pelis_byid){
     char *token = strtok(directores, ", ");
     while(token != NULL){
       if(strcmp(token, dir) == 0){
+        contador++;
         printf("Título: %s, Año: %d, Director: %s\n\n", peli->title, peli->year, peli->director);
       }
       token = strtok(NULL, ", "); 
     }
     free(directores); //liberar la memoria de la copia
     pair = map_next(pelis_byid);
-      
+  }
+  if (contador == 0)
+  {
+    printf("No hay director con el nombre %s\n", dir);
   }
 }
 
 //Esta funcion recibe un mapa de peliculas y imprime todas las peliculas que hayan salido en una decada dada por el usuario
-void buscar_por_decada(Map *pelis_byid)
-{
+void buscar_por_decada(Map *pelis_byid){
   if (map_first(pelis_byid) == NULL)
   {
     printf("No hay peliculas registradas.\n");
@@ -274,8 +299,7 @@ void buscar_por_decada(Map *pelis_byid)
 }
 
 // Esta funcion recibe un mapa de peliculas y imprime todas las peliculas que hay en un rango predeterminado de calificaciones
-void buscar_por_rango_calificaciones(Map *pelis_byid)
-{
+void buscar_por_rango_calificaciones(Map *pelis_byid){
   if (map_first(pelis_byid) == NULL)
   {
     printf("No hay peliculas registradas.\n");
@@ -284,7 +308,7 @@ void buscar_por_rango_calificaciones(Map *pelis_byid)
   // Se crea tres variables, una de tipo int para guardar la opcion que el usuario desee, y dos de tipo float que seran usadas para almacenar el minimo y el maximo de la opcion ingresada por el usuario, asi tambien, se imprimen las opciones disponibles y se lee la opcion ingresada por el usuario con el scanf
   int opcion;
   float min, max;
-  printf("\nLista de rangos de calificaciones \n");
+  printf("\nLista de rangos de calificaciones\n");
   printf("1) 9.0 - 9.4\n");
   printf("2) 8.5 - 8.9\n");
   printf("3) 8.0 - 8.4\n");
@@ -359,11 +383,55 @@ void buscar_por_rango_calificaciones(Map *pelis_byid)
     }
 }
 
-void buscar_por_decada_genero(Map *pelis_byid)
-{
+// Esta funcion recibe un mapa, con el cual a traves de dos variables, una de tipo string y otra de tipo int, busca las peliculas con un genero y una decada que requiera el usuario
+void buscar_por_decada_genero(Map *pelis_byid){
+  // Si el mapa esta vacio, se imprime un mensaje correspondiente y se retorna
   if (map_first(pelis_byid) == NULL)
   {
     printf("No hay peliculas registradas.\n");
+    return;
+  }
+  // Se crea las variables decada y genero de tipo int y char respectivamente, que almacenara la decada y genero ingresado por el usuario, y a continuacion se leen las variables y convierte el string en su primera letra en mayuscula y las demas en minusculas
+  int decada;
+  printf("Ingresar decada buscada: ");
+  scanf("%d", &decada);
+  char genero[100];
+  printf("Ingrese el genero de la pelicula: ");
+  scanf("%s", genero);
+  capitalizeWord(genero);
+  // Se crea un puntero de tipo MapPair que almacenara el primer par del mapa y un contador de tipo int que ira aumentando en 1 cada vez que se encuentre una pelicula con el genero y decada ingresado por el usuario
+  MapPair *pair = map_first(pelis_byid);
+  int contador = 0;
+  printf("\nResultado de busqueda:\n");
+  // Se recorre el mapa hasta que el puntero pair llegue a NULL, es decir, hasta que se recorra todo el mapa
+  while(pair != NULL)
+    {
+      // Se crean tres punteros, uno de tipo Film que almacenara los datos de la pelicula actual, otro de tipo List que almacenara los generos de la pelicula actual y otro de tipo char que almacenara el genero actual
+      Film *peli = pair->value;
+      List *genres = peli->genres;
+      char *node = list_first(genres);
+      // Se recorre la lista de generos de la pelicula actual hasta que se haya recorrido todos los generos
+      while (node != NULL)
+        {
+          // Si el genero actual coincide con el genero y la decada ingresada por el usuario, se incrementa el contador y se imprime la pelicula con su titulo y  su año
+          if(strcmp(node, genero) == 0)
+          {
+            if (peli->year >= decada && peli->year <= decada + 9)
+            {
+              contador++;
+              printf("Titulo: %s, Año: %d\n", peli->title, peli->year);
+            }
+          }
+          // Se avanza al siguiente nodo de la lista de generos
+          node = list_next(genres);
+        }
+      // Se avanza al siguiente par del mapa
+      pair = map_next(pelis_byid);
+    }
+  // Si el contador es 0, significa que no se encontraron peliculas con el genero y la decada ingresada por el usuario
+  if (contador == 0)
+  {
+    printf("No se encontraron peliculas en esa decada con el genero %s\n", genero);
   }
 }
 
@@ -408,6 +476,8 @@ int main() {
     presioneTeclaParaContinuar();
 
   } while (opcion != '8');
-
+  // Libera la memoria del mapa y de las películas
+  map_clean(pelis_byid);
+  limpiarPantalla();
   return 0;
 }
